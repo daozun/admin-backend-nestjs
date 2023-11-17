@@ -8,6 +8,7 @@ import { Repository } from 'typeorm';
 import { BaseResponse } from "../common/baseReponse";
 import { isMatch } from "../utils/index";
 import { AuthService } from "../auth/auth.service";
+import * as _ from 'lodash';
 
 @Injectable()
 export class LoginService {
@@ -41,15 +42,16 @@ export class LoginService {
     loginEntity.user_id = account.id;    
 
     const isLogin = await this.loginRepository.save(loginEntity);
-    const token = await this.authService.generateToken({
-      username: createLoginDto.username,
-      userId: account.id
-    });
 
     if(isLogin) {
+      const token = await this.authService.generateToken({
+        username: createLoginDto.username,
+        userId: account.id
+      });
+
       return new BaseResponse(HttpStatus.OK, "登录成功", {
         token: token,
-        userId: account.id
+        userInfo: _.omit(account, ['password'])
       })
     }
   }

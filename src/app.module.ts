@@ -10,9 +10,11 @@ import { CustomNamingStrategy } from "./config/customNamingStrategy"
 import { User } from "./users/entities/user.entity";
 import { Login } from "./login/entities/login.entity";
 import { Register } from "./register/entities/register.entity";
+import { Article } from "./article/entities/article.entity";
 import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from "./auth/auth.guard";
+import { ArticleModule } from './article/article.module';
 
 @Module({
   imports: [
@@ -27,10 +29,10 @@ import { AuthGuard } from "./auth/auth.guard";
       password: process.env.DATABASE_PASSWORD,
       database: process.env.DATABASE_NAME,    
       // autoLoadEntities: true,
-      entities: [User, Login, Register],
+      entities: [User, Login, Register, Article],
       synchronize: process.env.FLAG === 'dev' ? true : false,
       logging: true
-  }), UsersModule, RegisterModule, LoginModule, AuthModule],
+  }), UsersModule, RegisterModule, LoginModule, AuthModule, ArticleModule],
   controllers: [AppController],
   providers: [AppService,
     {

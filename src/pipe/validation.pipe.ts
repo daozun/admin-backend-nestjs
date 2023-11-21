@@ -18,7 +18,8 @@ export class ValidationPipe implements PipeTransform<any> {
     const object = plainToInstance(metatype, value);
     const errors = await validate(object);
     if (errors.length > 0) {
-      throw new BaseResponse(HttpStatus.CONFLICT, '参数校验失败', errors);
+      const msg = Object.values(errors[0].constraints)[0];
+      throw new BaseResponse(HttpStatus.BAD_REQUEST, msg);
     }
     return value;
   }

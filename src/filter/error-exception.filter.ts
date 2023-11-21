@@ -36,6 +36,9 @@ export class ErrorExceptionFilter implements ExceptionFilter {
         response.status(status).json({
             statusCode: status,
             message: message,
+            data: null
         });
+
+        // return new BaseResponse(status, "666", null);
     }
 }

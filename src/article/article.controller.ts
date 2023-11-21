@@ -1,8 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, Query } from '@nestjs/common';
 import { ArticleService } from './article.service';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
+import { GetArticleListDto } from "./dto/get-article-list.dto"
 import { BaseResponse } from '../common/baseReponse';
+import { query } from 'express';
 
 @Controller('article')
 export class ArticleController {
@@ -19,9 +21,9 @@ export class ArticleController {
     }
   }
 
-  @Get()
-  findAll() {
-    return this.articleService.findAll();
+  @Get("list")
+  async findAll(@Query() getArticleListDto: GetArticleListDto) {
+    return this.articleService.findAll(getArticleListDto);
   }
 
   @Get(':id')

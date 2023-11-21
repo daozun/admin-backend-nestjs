@@ -5,6 +5,7 @@ import { UpdateArticleDto } from './dto/update-article.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Article } from './entities/article.entity';
 import { Repository } from 'typeorm';
+import { GetArticleListDto } from "./dto/get-article-list.dto"
 
 @Injectable()
 export class ArticleService {
@@ -17,7 +18,7 @@ export class ArticleService {
     return this.articleRepository.save(createArticleDto);
   }
 
-  findAll() {
+  findAll(getArticleListDto: GetArticleListDto) {
     return `This action returns all article`;
   }
 

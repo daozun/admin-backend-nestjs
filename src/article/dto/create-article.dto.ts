@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsEnum, IsNotEmpty, IsString, Max, MaxLength, Min, MinLength } from "class-validator";
-import { StatusEnum, StatusType } from "../entities/article.entity";
+import { StatusEnum } from "../entities/article.entity";
 
 export class CreateArticleDto {
     @ApiProperty()
@@ -20,5 +20,5 @@ export class CreateArticleDto {
     @ApiProperty()
     @IsNotEmpty({ message: '状态不能为空' })
     @IsEnum(StatusEnum, { message: '状态错误' })
-    status: StatusType
+    status: StatusEnum
 }

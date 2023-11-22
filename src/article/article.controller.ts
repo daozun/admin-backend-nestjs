@@ -1,10 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, Query, ParseIntPipe } from '@nestjs/common';
 import { ArticleService } from './article.service';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
 import { GetArticleListDto } from "./dto/get-article-list.dto"
 import { BaseResponse } from '../common/baseReponse';
-import { query } from 'express';
 
 @Controller('article')
 export class ArticleController {
@@ -23,7 +22,12 @@ export class ArticleController {
 
   @Get("list")
   async findAll(@Query() getArticleListDto: GetArticleListDto) {
-    return this.articleService.findAll(getArticleListDto);
+    const [records, total] = await this.articleService.findAll(getArticleListDto);
+
+    return new BaseResponse(HttpStatus.OK, "获取成功", {
+      records,
+      total
+    })
   }
 
   @Get(':id')

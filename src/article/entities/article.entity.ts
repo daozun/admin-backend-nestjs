@@ -2,7 +2,6 @@ import { Column, Entity } from "typeorm";
 import { BaseEntity } from '../../common/baseEntity';
 import { Exclude } from "class-transformer";
 
-export type StatusType = 0 | 1;
 export enum StatusEnum {
     DRAFT = 0,
     PUBLISHED = 1
@@ -17,11 +16,10 @@ export class Article extends BaseEntity{
 
     @Exclude()
     @Column({
-        type: 'enum',
-        enum: [0, 1],
+        type: 'tinyint',
         default: 0
     })
-    status: StatusType;
+    status: StatusEnum;
 
     @Column({ length: 10 })
     author: string;

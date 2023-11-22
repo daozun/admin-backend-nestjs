@@ -41,7 +41,7 @@ export class AuthGuard implements CanActivate {
           // so that we can access it in our route handlers
           request['user'] = payload;
         } catch {
-          throw new BaseResponse(HttpStatus.UNAUTHORIZED, "没有权限", null)
+          throw new BaseResponse(HttpStatus.UNAUTHORIZED, "token已过期", null)
         }
 
         return true;

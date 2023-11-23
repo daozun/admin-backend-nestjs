@@ -1,6 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsEnum, IsNotEmpty, IsString, Max, MaxLength, Min, MinLength } from "class-validator";
+import { IsEnum, IsInt, IsNotEmpty, IsString, Max, MaxLength, Min, MinLength } from "class-validator";
 import { StatusEnum } from "../entities/article.entity";
+import { Type } from "class-transformer";
 
 export class CreateArticleDto {
     @ApiProperty()
@@ -19,6 +20,7 @@ export class CreateArticleDto {
 
     @ApiProperty()
     @IsNotEmpty({ message: '状态不能为空' })
-    @IsEnum(StatusEnum, { message: '状态错误' })
+    @Type(() => Number)
+    @IsInt({ message: '状态错误' })
     status: StatusEnum
 }

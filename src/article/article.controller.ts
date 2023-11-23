@@ -41,7 +41,11 @@ export class ArticleController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.articleService.remove(+id);
+  async remove(@Param('id') id: string) {
+    const isUpadte = await this.articleService.remove(id);
+
+    if(isUpadte) {
+      return new BaseResponse(HttpStatus.OK, "删除成功", null)
+    }
   }
 }

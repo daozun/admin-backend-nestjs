@@ -70,7 +70,10 @@ export class ArticleService {
     return `This action updates a #${id} article`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} article`;
+  remove(id: string) {
+    return this.articleRepository.save({
+      id: id,
+      deleteflag: DeleteFlagEnum.DELETE
+    })
   }
 }

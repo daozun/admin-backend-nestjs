@@ -62,18 +62,49 @@ export class ArticleService {
     return list;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} article`;
-  }
-
-  update(id: number, updateArticleDto: UpdateArticleDto) {
-    return `This action updates a #${id} article`;
-  }
-
-  remove(id: string) {
-    return this.articleRepository.save({
-      id: id,
-      deleteflag: DeleteFlagEnum.DELETE
+  async findOne(id: string) {
+    const obj = await this.articleRepository.findOneBy({
+      id:id
     })
+
+    return obj;
+  }
+
+  async update(id: string, updateArticleDto: UpdateArticleDto) {
+    const obj = await this.findOne(id);
+
+    if(obj) {
+      obj.title = updateArticleDto.title;
+      obj.author = updateArticleDto.author;
+      obj.status = Number(updateArticleDto.status);
+
+      const isSave = await this.articleRepository.save(obj).catch(err => err);
+
+      if(isSave.code) {
+        return new BaseResponse(HttpStatus.INTERNAL_SERVER_ERROR, isSave.code, null)
+      } else {
+        return new BaseResponse(HttpStatus.OK, "更新成功", null)
+      }      
+    }
+
+    return new BaseResponse(HttpStatus.BAD_REQUEST, "不是一个有效id", null)
+  }
+
+  async remove(id: string) {
+    const obj = await this.findOne(id);
+
+    if(obj) {
+      obj.deleteflag = DeleteFlagEnum.DELETE;
+
+      const isSave = await this.articleRepository.save(obj).catch(err => err);
+
+      if(isSave.code) {
+        return new BaseResponse(HttpStatus.INTERNAL_SERVER_ERROR, isSave.code, null)
+      } else {
+        return new BaseResponse(HttpStatus.OK, "删除成功", null)
+      }
+    }
+
+    return new BaseResponse(HttpStatus.BAD_REQUEST, "不是一个有效id", null)
   }
 }

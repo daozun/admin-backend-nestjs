@@ -10,12 +10,12 @@ import { Response } from 'express';
 import { BaseResponse } from "../common/baseReponse";
 import { Reflector } from '@nestjs/core';
 
-@Catch(QueryFailedError)
+@Catch()
 export class ErrorExceptionFilter implements ExceptionFilter {
     constructor(public reflector: Reflector) {}
     
     catch(exception: any, host: ArgumentsHost) {
-        console.log('%c [ exception ]-15', 'font-size:13px; background:pink; color:#bf2c9f;', exception)
+        console.log('%c [ exception ]-18', 'font-size:13px; background:pink; color:#bf2c9f;', exception)
         const ctx = host.switchToHttp();
         const response = ctx.getResponse<Response>();
 
@@ -32,6 +32,18 @@ export class ErrorExceptionFilter implements ExceptionFilter {
         //     // status = exception.getStatus();
         //     // message = exception.message;
         // }        
+
+        if(exception instanceof QueryFailedError) {
+            console.log("111")
+        }
+
+        if(exception instanceof TypeORMError) {
+            console.log("222")
+        }
+
+        if(exception instanceof EntityNotFoundError) {
+            console.log("333")
+        }
 
         response.status(status).json({
             statusCode: status,

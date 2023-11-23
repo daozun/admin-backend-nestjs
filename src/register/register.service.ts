@@ -44,7 +44,9 @@ export class RegisterService {
       registerEntity.username = createRegisterDto.username;
       registerEntity.user_id = account.id;  
       
-      await this.registerRepository.save(registerEntity);
+      await this.registerRepository.save(registerEntity, {
+        transaction: true,
+      });
 
       this.logger.log('注册成功');
       return new BaseResponse(HttpStatus.CREATED, "注册成功", null)

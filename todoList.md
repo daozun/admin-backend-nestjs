@@ -6,6 +6,7 @@
 - [*] 验证token，增加路由守卫
 - [*] 注册全局验证token守卫，注册和登录接口增加public元数据
 - [*] 接口返回值屏蔽敏感字段
+- [*] article 增删改查
 - [] typeorm migration 文件编写
 - [*] 加入swagger文档说明
 - [] 增加log

@@ -15,7 +15,6 @@ export class ErrorExceptionFilter implements ExceptionFilter {
     constructor(public reflector: Reflector) {}
     
     catch(exception: any, host: ArgumentsHost) {
-        console.log('%c [ exception ]-18', 'font-size:13px; background:pink; color:#bf2c9f;', exception)
         const ctx = host.switchToHttp();
         const response = ctx.getResponse<Response>();
 

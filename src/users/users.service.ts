@@ -6,6 +6,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { encrypt, isMatch } from 'src/utils';
 import { BaseResponse } from '../common/baseReponse';
+import { UploadAvatarDto } from './dto/upload-avatar.dto';
 
 @Injectable()
 export class UsersService {
@@ -23,6 +24,17 @@ export class UsersService {
       .createQueryBuilder("users")
       .where("users.username = :username", { username: createUserDto.username })
       .getOne()
+  }
+
+  async uploadAvatar(uploadAvatar: UploadAvatarDto): Promise<any> {
+    const obj = await this.usersRepository.findOneBy({
+      id:uploadAvatar.userId
+    })
+
+    if(obj) {
+      obj.avatar = uploadAvatar.avatar;
+      return this.usersRepository.save(obj);
+    }
   }
 
   findAll() {

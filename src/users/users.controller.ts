@@ -10,6 +10,8 @@ import {
   UseInterceptors,
   HttpStatus,
   UseGuards,
+  UploadedFile,
+  ParseFilePipeBuilder,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -17,8 +19,9 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { LoggingInterceptor } from 'src/interceptor/logging.interceptor';
 import { User } from './entities/user.entity';
 import { BaseResponse } from "../common/baseReponse";
-import { AuthGuard } from "../auth/auth.guard";
 import { ApiHeader, ApiTags } from '@nestjs/swagger';
+import { UploadAvatarDto } from './dto/upload-avatar.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('用户相关(user)')
 @ApiHeader({
@@ -35,7 +38,6 @@ export class UsersController {
   //   return this.usersService.findAll();
   // }
 
-  @UseGuards(AuthGuard)
   @Get(':id')
   async findOne(@Param('id') id: string) {
     const userObj = await this.usersService.findOne(id);
@@ -44,7 +46,42 @@ export class UsersController {
       return new BaseResponse(HttpStatus.OK, null, userObj)
     }
 
-    return new BaseResponse(HttpStatus.NOT_FOUND, 'User not found', null)
+    return new BaseResponse(HttpStatus.NOT_FOUND, '没有此用户', null)
+  }
+
+  @UseInterceptors(FileInterceptor('file'))
+  @Post('/upload/avatar')
+  async uploadAvatar(@Body() uploadAvatarDto: UploadAvatarDto, @UploadedFile(
+    new ParseFilePipeBuilder()
+    .addFileTypeValidator({
+      fileType: /(jpg|jpeg|png)$/,
+    })
+    .addMaxSizeValidator({
+      maxSize: 5242880 // 5mb
+    }) 
+    .build({
+      exceptionFactory(error) {
+        if(error.includes("type")) {
+          return new BaseResponse(HttpStatus.UNPROCESSABLE_ENTITY, "文件格式错误", null)
+        }
+
+        if(error.includes("size")) {
+          throw new BaseResponse(HttpStatus.UNPROCESSABLE_ENTITY, "文件过大", null)
+        }
+      },      
+    }),
+  ) file: Express.Multer.File,) {
+    const newDto = Object.assign(uploadAvatarDto, {
+      avatar: file.buffer.toString('base64')
+    })
+
+    const userObj = await this.usersService.uploadAvatar(newDto);
+
+    if(userObj) {
+      return new BaseResponse(HttpStatus.OK, "头像上传成功", null)
+    }
+
+    return new BaseResponse(HttpStatus.NOT_FOUND, '头像上传失败', null)
   }
 
   // @Patch(':id')

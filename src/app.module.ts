@@ -15,29 +15,35 @@ import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from "./auth/auth.guard";
 import { ArticleModule } from './article/article.module';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       envFilePath: ['.env.development'],
     }),
+    ThrottlerModule.forRoot([{
+      ttl: Number(process.env.THROTTLE_RATE_LIMIT_PERIOD),
+      limit: Number(process.env.THROTTLE_RATE_LIMIT),
+    }]),    
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: process.env.DATABASE_HOST,
       port: parseInt(process.env.DATABASE_PORT, 10),
       username: process.env.DATABASE_USER,
       password: process.env.DATABASE_PASSWORD,
-      database: process.env.DATABASE_NAME,    
+      database: process.env.DATABASE_NAME,
       // autoLoadEntities: true,
       entities: [User, Login, Register, Article],
       synchronize: process.env.FLAG === 'dev' ? true : false,
       logging: true
-  }), UsersModule, RegisterModule, LoginModule, AuthModule, ArticleModule],
+    }), UsersModule, RegisterModule, LoginModule, AuthModule, ArticleModule],
   controllers: [AppController],
   providers: [AppService,
     {
       provide: APP_GUARD,
       useClass: AuthGuard,
-    },],
+    },   
+  ],
 })
-export class AppModule {}
+export class AppModule { }

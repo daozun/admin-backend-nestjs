@@ -26,6 +26,7 @@ export class AuthGuard implements CanActivate {
         }        
 
         const request = context.switchToHttp().getRequest();
+        console.log('%c [ request ]-29', 'font-size:13px; background:pink; color:#bf2c9f;', request)
         const token = this.extractTokenFromHeader(request);
         if (!token) {
           throw new BaseResponse(HttpStatus.UNAUTHORIZED, "没有权限", null)

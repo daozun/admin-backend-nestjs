@@ -2,6 +2,11 @@ import { Entity, Column, OneToMany, JoinColumn, JoinTable, ManyToOne } from 'typ
 import { BaseEntity } from '../../common/baseEntity';
 import { Exclude } from 'class-transformer';
 
+export enum UserRole {
+    ADMIN = "admin",
+    VISITOR = "visitor"
+}
+
 @Entity({
     name: "users"
 })
@@ -15,4 +20,11 @@ export class User extends BaseEntity{
 
     @Column({ type: "longtext", nullable: true, default: null})
     avatar: string;
+
+    @Column({
+        type: "enum",
+        enum: UserRole,
+        default: UserRole.VISITOR,
+    })
+    user_role: UserRole    
 }

@@ -26,7 +26,6 @@ export class AuthGuard implements CanActivate {
         }        
 
         const request = context.switchToHttp().getRequest();
-        console.log('%c [ request ]-29', 'font-size:13px; background:pink; color:#bf2c9f;', request)
         const token = this.extractTokenFromHeader(request);
         if (!token) {
           throw new BaseResponse(HttpStatus.UNAUTHORIZED, "没有权限", null)
@@ -38,8 +37,6 @@ export class AuthGuard implements CanActivate {
               secret: process.env.JWT_SECRET
             }
           );
-          // 💡 We're assigning the payload to the request object here
-          // so that we can access it in our route handlers
           request['user'] = payload;
         } catch {
           throw new BaseResponse(HttpStatus.UNAUTHORIZED, "token已过期", null)

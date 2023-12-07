@@ -11,11 +11,15 @@ import { User } from "./users/entities/user.entity";
 import { Login } from "./login/entities/login.entity";
 import { Register } from "./register/entities/register.entity";
 import { Article } from "./article/entities/article.entity";
+import { Role } from "./role/entities/role.entity";
+import { Menu } from "./menu/entities/menu.entity";
 import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from "./auth/auth.guard";
 import { ArticleModule } from './article/article.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { RoleModule } from './role/role.module';
+import { MenuModule } from './menu/menu.module';
 
 @Module({
   imports: [
@@ -34,10 +38,10 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
       password: process.env.DATABASE_PASSWORD,
       database: process.env.DATABASE_NAME,
       // autoLoadEntities: true,
-      entities: [User, Login, Register, Article],
+      entities: [User, Login, Register, Article, Role, Menu],
       synchronize: process.env.FLAG === 'dev' ? true : false,
       logging: true
-    }), UsersModule, RegisterModule, LoginModule, AuthModule, ArticleModule],
+    }), UsersModule, RegisterModule, LoginModule, AuthModule, ArticleModule, RoleModule, MenuModule],
   controllers: [AppController],
   providers: [AppService,
     {

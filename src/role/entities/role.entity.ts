@@ -17,5 +17,10 @@ export class Role extends BaseEntity {
     code: UserRole;
     
     @Column("simple-array")
-    user_ids: string[]    
+    user_ids: string[] 
+    
+    @Column({
+        type: "longtext"
+    })
+    menu: string  
 }

@@ -12,7 +12,7 @@ export class MenuController {
     return this.menuService.create(createMenuDto);
   }
 
-  @Get()
+  @Get('list')
   findAll() {
     return this.menuService.findAll();
   }

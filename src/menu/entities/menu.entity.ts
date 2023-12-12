@@ -17,6 +17,9 @@ export class Menu extends BaseEntity {
     @Column({ type: "boolean", default: false})
     hidden: Boolean;
 
+    @Column({ type: "boolean", default: false})
+    alwaysShow: Boolean
+
     @Column({ type: "varchar", default: null})
     component: string;
 
@@ -29,6 +32,6 @@ export class Menu extends BaseEntity {
     @Column({ type: "varchar", length: 36, default: null })
     role_id: string;
 
-    @Column({ type: "varchar", default: null})
-    level: string;
+    @Column({ type: "int", default: null})
+    level: number;
 }

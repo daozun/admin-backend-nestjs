@@ -63,9 +63,7 @@ export class ArticleService {
   }
 
   async findOne(id: string) {
-    const obj = await this.articleRepository.findOneBy({
-      id:id
-    })
+    const obj = await this.articleRepository.findOneBy({ deleteflag: DeleteFlagEnum.UNDELETE, id:id })
 
     return obj;
   }
@@ -78,10 +76,10 @@ export class ArticleService {
       obj.author = updateArticleDto.author;
       obj.status = Number(updateArticleDto.status);
 
-      const isSave = await this.articleRepository.save(obj).catch(err => err);
+      const saveObj = await this.articleRepository.save(obj).catch(err => err);
 
-      if(isSave.code) {
-        return new BaseResponse(HttpStatus.INTERNAL_SERVER_ERROR, isSave.code, null)
+      if(saveObj.code) {
+        return new BaseResponse(HttpStatus.INTERNAL_SERVER_ERROR, saveObj.code, null)
       } else {
         return new BaseResponse(HttpStatus.OK, "更新成功", null)
       }      
@@ -96,10 +94,10 @@ export class ArticleService {
     if(obj) {
       obj.deleteflag = DeleteFlagEnum.DELETE;
 
-      const isSave = await this.articleRepository.save(obj).catch(err => err);
+      const saveObj = await this.articleRepository.save(obj).catch(err => err);
 
-      if(isSave.code) {
-        return new BaseResponse(HttpStatus.INTERNAL_SERVER_ERROR, isSave.code, null)
+      if(saveObj.code) {
+        return new BaseResponse(HttpStatus.INTERNAL_SERVER_ERROR, saveObj.code, null)
       } else {
         return new BaseResponse(HttpStatus.OK, "删除成功", null)
       }

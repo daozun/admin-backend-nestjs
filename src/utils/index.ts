@@ -13,3 +13,21 @@ export const isMatch = async (password: string, encryptedText: string) => {
 
     return isMatch;
 };
+
+export const buildTree = (data: any[]) => {
+    const tree = [];
+    for (let i = 0; i < data.length; i++) {
+        const item = data[i];
+        const parentId = item.parent_id;
+        if (parentId) {
+            const parent = tree.find((p) => p.id === parentId);
+            if (parent) {
+                parent.children = [...(parent.children || []), item];
+            }
+        } else {
+            tree.push(item);
+        }
+    }
+
+    return tree;
+}

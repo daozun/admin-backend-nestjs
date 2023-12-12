@@ -12,9 +12,9 @@ export class ArticleController {
   @Post()
   async create(@Body() createArticleDto: CreateArticleDto) {
     try {
-      const isSave = await this.articleService.create(createArticleDto);
+      const saveObj = await this.articleService.create(createArticleDto);
 
-      if(isSave) {
+      if(saveObj) {
         return new BaseResponse(HttpStatus.CREATED, "新增成功", null)
       } else {
         return new BaseResponse(HttpStatus.INTERNAL_SERVER_ERROR, "新增失败", null)

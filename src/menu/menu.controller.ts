@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, Query } from '@nestjs/common';
 import { MenuService } from './menu.service';
 import { CreateMenuDto } from './dto/create-menu.dto';
 import { UpdateMenuDto } from './dto/update-menu.dto';
@@ -38,6 +38,21 @@ export class MenuController {
       }
   
       return new BaseResponse(HttpStatus.OK, "获取成功", obj)        
+    } catch (error) {
+      return new BaseResponse(HttpStatus.INTERNAL_SERVER_ERROR, "获取失败", null)
+    }    
+  }
+
+  @Get('children/:id')
+  async findChildren(@Param('id') id: string) {
+    try {
+      const list = await this.menuService.findChildren(id);
+
+      if(!list) {
+        return new BaseResponse(HttpStatus.BAD_REQUEST, "不是一个有效id", null)
+      }
+  
+      return new BaseResponse(HttpStatus.OK, "获取成功", list)        
     } catch (error) {
       return new BaseResponse(HttpStatus.INTERNAL_SERVER_ERROR, "获取失败", null)
     }    

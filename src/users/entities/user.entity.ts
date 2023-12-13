@@ -4,7 +4,7 @@ import { Exclude } from 'class-transformer';
 
 export enum UserRole {
     ADMIN = "admin",
-    VISITOR = "visitor"
+    NORMAL = "normal"
 }
 
 @Entity({
@@ -24,7 +24,7 @@ export class User extends BaseEntity{
     @Column({
         type: "enum",
         enum: UserRole,
-        default: UserRole.VISITOR,
+        default: UserRole.NORMAL,
     })
     user_role: UserRole    
 }

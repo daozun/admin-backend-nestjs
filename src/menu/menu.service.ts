@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 import { Menu } from './entities/menu.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BaseResponse } from '../common/baseReponse';
-import { buildTree } from "../utils"
+import { listToTree } from "../utils"
 import { DeleteFlagEnum } from "../common/baseEntity";
 
 @Injectable()
@@ -23,7 +23,7 @@ export class MenuService {
     .where('menu.deleteflag = :deleteflag', { deleteflag: DeleteFlagEnum.UNDELETE })
     .getMany()
 
-    const treeList = buildTree(list);
+    const treeList = listToTree(list);
 
     if(list) {
       return new BaseResponse(HttpStatus.OK, null, treeList)
@@ -39,6 +39,14 @@ export class MenuService {
     })
 
     return obj;
+  }
+
+  async findChildren(id: string) {
+    const list = await this.menuRepository.findBy({
+      parent_id: id
+    })
+
+    return list;
   }
 
   async update(id: string, updateMenuDto: UpdateMenuDto) {
@@ -60,6 +68,14 @@ export class MenuService {
   }
 
   async remove(id: string) {
+    const parentObj = await this.menuRepository.findOneBy({
+      parent_id: id,
+    })
+
+    if(parentObj) {
+      return new BaseResponse(HttpStatus.BAD_REQUEST, "请先删除其下的子菜单", null)
+    }
+
     const obj = await this.findOne(id);
 
     if(obj) {

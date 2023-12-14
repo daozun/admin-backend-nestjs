@@ -29,9 +29,6 @@ export class Menu extends BaseEntity {
     @Column({ type: "varchar", default: null})
     redirect: string;
 
-    @Column({ type: "varchar", length: 36, default: null })
-    role_id: string;
-
     @Column({ type: "int", default: null})
     level: number;
 }

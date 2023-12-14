@@ -3,6 +3,7 @@ import { BaseResponse } from "../common/baseReponse";
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { Role } from './entities/role.entity';
+import { RoleMenu } from './entities/role_menu.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -11,7 +12,9 @@ import { Repository } from 'typeorm';
 export class RoleService {
   constructor(
     @InjectRepository(Role)
-    private articleRepository: Repository<Role>
+    private articleRepository: Repository<Role>,
+    @InjectRepository(RoleMenu)
+    private roleMenuRepository: Repository<RoleMenu>
   ) {}
   create(createRoleDto: CreateRoleDto) {
     return 'This action adds a new role';

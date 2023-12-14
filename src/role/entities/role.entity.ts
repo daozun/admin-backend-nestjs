@@ -15,12 +15,4 @@ export class Role extends BaseEntity {
         default: UserRole.NORMAL,
     })
     code: UserRole;
-    
-    @Column("simple-array")
-    user_ids: string[] 
-    
-    @Column({
-        type: "longtext"
-    })
-    menu: string  
 }

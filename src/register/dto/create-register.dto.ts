@@ -1,5 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsNotEmpty, IsString, MaxLength, MinLength } from "class-validator";
+import { UserRole } from "../../users/entities/user.entity";
 
 export class CreateRegisterDto {
     @ApiProperty()
@@ -15,4 +16,6 @@ export class CreateRegisterDto {
     @MinLength(1, {message: '密码不能少于1个字符'})
     @MaxLength(36, { message: '密码不能超过36个字符'})       
     password: string;
+
+    user_role: UserRole
 }

@@ -1,7 +1,7 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { CreateMenuDto } from './dto/create-menu.dto';
 import { UpdateMenuDto } from './dto/update-menu.dto';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { Menu } from './entities/menu.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BaseResponse } from '../common/baseReponse';
@@ -12,10 +12,13 @@ import { DeleteFlagEnum } from "../common/baseEntity";
 export class MenuService {
   constructor(
     @InjectRepository(Menu)
-    private menuRepository: Repository<Menu>
+    private menuRepository: Repository<Menu>,
+    private dataSource: DataSource
   ) {}  
-  create(createMenuDto: CreateMenuDto) {
-   return this.menuRepository.save(createMenuDto);
+  async create(createMenuDto: CreateMenuDto):Promise<any> {
+    return await this.dataSource.manager.transaction(async (transactionalEntityManager) => {
+      return transactionalEntityManager.getRepository(Menu).save(createMenuDto);
+    })
   }
 
   async findAll() {

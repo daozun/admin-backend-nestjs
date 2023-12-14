@@ -7,6 +7,7 @@ import { User } from "../users/entities/user.entity"
 import { Register } from "./entities/register.entity";
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { UserRole } from "../users/entities/user.entity";
 
 @Injectable()
 export class RegisterService {
@@ -17,7 +18,7 @@ export class RegisterService {
     @InjectRepository(User)    
     private userRepository: Repository<User>,
     @InjectRepository(Register)    
-    private registerRepository: Repository<Register>    
+    private registerRepository: Repository<Register>,
   ) {}
 
   async create(createRegisterDto: CreateRegisterDto): Promise<any> {
@@ -28,13 +29,13 @@ export class RegisterService {
       return new BaseResponse(HttpStatus.CONFLICT, '用户名已存在', null);
     }
 
-    let newPassword = await encrypt(createRegisterDto.password);
-    createRegisterDto.password = newPassword;
+    let encryptPassword = await encrypt(createRegisterDto.password);
+    createRegisterDto.password = encryptPassword;
+    createRegisterDto.user_role = UserRole.NORMAL;
 
     const isCreate = await this.usersService.create(createRegisterDto);
 
     if(isCreate) {
-
       const account = await this.userRepository
       .createQueryBuilder("user")
       .where("user.username = :username", { username: createRegisterDto.username })
@@ -44,9 +45,7 @@ export class RegisterService {
       registerEntity.username = createRegisterDto.username;
       registerEntity.user_id = account.id;  
       
-      await this.registerRepository.save(registerEntity, {
-        transaction: true,
-      });
+      await this.registerRepository.save(registerEntity);
 
       this.logger.log('注册成功');
       return new BaseResponse(HttpStatus.CREATED, "注册成功", null)

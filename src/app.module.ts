@@ -12,6 +12,7 @@ import { Login } from "./login/entities/login.entity";
 import { Register } from "./register/entities/register.entity";
 import { Article } from "./article/entities/article.entity";
 import { Role } from "./role/entities/role.entity";
+import { RoleMenu } from "./role/entities/role_menu.entity";
 import { Menu } from "./menu/entities/menu.entity";
 import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
@@ -29,7 +30,7 @@ import { MenuModule } from './menu/menu.module';
     ThrottlerModule.forRoot([{
       ttl: Number(process.env.THROTTLE_RATE_LIMIT_PERIOD),
       limit: Number(process.env.THROTTLE_RATE_LIMIT),
-    }]),    
+    }]),
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: process.env.DATABASE_HOST,
@@ -38,7 +39,7 @@ import { MenuModule } from './menu/menu.module';
       password: process.env.DATABASE_PASSWORD,
       database: process.env.DATABASE_NAME,
       // autoLoadEntities: true,
-      entities: [User, Login, Register, Article, Role, Menu],
+      entities: [User, Login, Register, Article, Role, Menu, RoleMenu],
       synchronize: process.env.FLAG === 'dev' ? true : false,
       logging: true
     }), UsersModule, RegisterModule, LoginModule, AuthModule, ArticleModule, RoleModule, MenuModule],
@@ -47,7 +48,7 @@ import { MenuModule } from './menu/menu.module';
     {
       provide: APP_GUARD,
       useClass: AuthGuard,
-    },   
+    },
   ],
 })
 export class AppModule { }

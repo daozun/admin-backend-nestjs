@@ -46,7 +46,8 @@ export class LoginService {
     if(isLogin) {
       const token = await this.authService.generateToken({
         username: createLoginDto.username,
-        userId: account.id
+        userId: account.id,
+        user_role: account.user_role
       });
 
       return new BaseResponse(HttpStatus.OK, "登录成功", {

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, Query, Request } from '@nestjs/common';
 import { MenuService } from './menu.service';
 import { CreateMenuDto } from './dto/create-menu.dto';
 import { UpdateMenuDto } from './dto/update-menu.dto';
@@ -9,9 +9,9 @@ export class MenuController {
   constructor(private readonly menuService: MenuService) {}
 
   @Post()
-  async create(@Body() createMenuDto: CreateMenuDto) {
+  async create(@Body() createMenuDto: CreateMenuDto, @Request() req: any) {
     try {
-      const saveObj = await this.menuService.create(createMenuDto);
+      const saveObj = await this.menuService.create(createMenuDto, req);
 
       if(saveObj) {
         return new BaseResponse(HttpStatus.CREATED, "新增菜单成功", null)

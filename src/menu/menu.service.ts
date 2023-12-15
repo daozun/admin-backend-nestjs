@@ -3,6 +3,7 @@ import { CreateMenuDto } from './dto/create-menu.dto';
 import { UpdateMenuDto } from './dto/update-menu.dto';
 import { DataSource, Repository } from 'typeorm';
 import { Menu } from './entities/menu.entity';
+import { RoleMenu } from "../role/entities/role_menu.entity";
 import { InjectRepository } from '@nestjs/typeorm';
 import { BaseResponse } from '../common/baseReponse';
 import { listToTree } from "../utils"
@@ -13,11 +14,17 @@ export class MenuService {
   constructor(
     @InjectRepository(Menu)
     private menuRepository: Repository<Menu>,
+    @InjectRepository(RoleMenu)
     private dataSource: DataSource
   ) {}  
-  async create(createMenuDto: CreateMenuDto):Promise<any> {
+  async create(createMenuDto: CreateMenuDto, req: any):Promise<any> {
     return await this.dataSource.manager.transaction(async (transactionalEntityManager) => {
-      return transactionalEntityManager.getRepository(Menu).save(createMenuDto);
+      const menuId = await transactionalEntityManager.getRepository(Menu).save(createMenuDto).then(res => res.id)
+
+      return await transactionalEntityManager.getRepository(RoleMenu).save({
+        role_code: req.user_role,
+        menu_id: menuId
+      })
     })
   }
 

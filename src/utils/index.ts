@@ -21,3 +21,18 @@ export const listToTree = (items: any[], id = null, link = 'parent_id') =>
     ...item,
     children: listToTree(items, item.id)
   }));
+
+export const findTreeIds = (treeList: any[]) => {
+  let idList = [];
+
+  for (const item of treeList) {
+    if(item.children && item.children.length > 0) {
+      idList.push(item.id);
+      idList.concat(findTreeIds(item.children));
+    } else {
+      idList.push(item.id);
+    }
+  }
+
+  return idList;
+}

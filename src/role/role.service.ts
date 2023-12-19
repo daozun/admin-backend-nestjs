@@ -5,23 +5,75 @@ import { UpdateRoleDto } from './dto/update-role.dto';
 import { Role } from './entities/role.entity';
 import { RoleMenu } from './entities/role_menu.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-
+import { DataSource, Repository } from 'typeorm';
+import { UserRole } from "@/users/entities/user.entity"
+import { DeleteFlagEnum } from "@/common/baseEntity";
+import * as _ from 'lodash';
 
 @Injectable()
 export class RoleService {
   constructor(
     @InjectRepository(Role)
-    private articleRepository: Repository<Role>,
+    private roleRepository: Repository<Role>,
     @InjectRepository(RoleMenu)
-    private roleMenuRepository: Repository<RoleMenu>
+    private roleMenuRepository: Repository<RoleMenu>,
+    private dataSource: DataSource
   ) {}
-  create(createRoleDto: CreateRoleDto) {
-    return 'This action adds a new role';
+  async create(createRoleDto: CreateRoleDto, req: any) {
+    // TODO
   }
 
-  async findAll() {
-    const obj = await this.articleRepository.find();
+  async createRoleMenu(createRoleDto: CreateRoleDto, req: any) {
+    const menuIdList = createRoleDto.menuIdList;
+
+    try {
+      await this.dataSource.manager.transaction(async (transactionalEntityManager) => {
+        for (const item of menuIdList) {
+          await transactionalEntityManager.getRepository(RoleMenu).save({
+            role_code: req.user.user_role,
+            menu_id: item.id
+          })
+        }
+      })   
+      
+      return new BaseResponse(HttpStatus.OK, "添加成功", null)
+    } catch (error) {
+      return new BaseResponse(HttpStatus.INTERNAL_SERVER_ERROR, "系统错误", error)
+    }
+  }
+
+  async findAllRoleMenu(req: any) {
+    const list = await this.roleMenuRepository.find({
+      where: {
+        role_code: req.user.user_role,
+        deleteflag: DeleteFlagEnum.UNDELETE
+      }
+    });
+    
+    const roleMenuList = _.uniqBy(list, 'menu_id');
+
+    if(roleMenuList) {
+      return new BaseResponse(HttpStatus.OK, "获取成功", roleMenuList)
+    }
+
+    return new BaseResponse(HttpStatus.INTERNAL_SERVER_ERROR, "系统错误", null)
+  }
+
+  async findAll(req: any) {
+    let obj = null;
+
+    if(req.user_role === UserRole.ADMIN) {
+      obj = await this.roleRepository.findBy({
+        deleteflag: DeleteFlagEnum.UNDELETE
+      });
+    } else {
+      obj = await this.roleRepository.find({
+        where: {
+          code: req.user.user_role,
+          deleteflag: DeleteFlagEnum.UNDELETE
+        }
+      });
+    }
 
     if(obj) {
       return new BaseResponse(HttpStatus.OK, null, obj)

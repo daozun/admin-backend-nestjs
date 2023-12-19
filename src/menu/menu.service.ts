@@ -3,11 +3,11 @@ import { CreateMenuDto } from './dto/create-menu.dto';
 import { UpdateMenuDto } from './dto/update-menu.dto';
 import { DataSource, Repository } from 'typeorm';
 import { Menu } from './entities/menu.entity';
-import { RoleMenu } from "../role/entities/role_menu.entity";
+import { RoleMenu } from "@/role/entities/role_menu.entity";
 import { InjectRepository } from '@nestjs/typeorm';
-import { BaseResponse } from '../common/baseReponse';
-import { listToTree } from "../utils"
-import { DeleteFlagEnum } from "../common/baseEntity";
+import { BaseResponse } from '@/common/baseReponse';
+import { listToTree } from "@/utils"
+import { DeleteFlagEnum } from "@/common/baseEntity";
 
 @Injectable()
 export class MenuService {
@@ -18,14 +18,7 @@ export class MenuService {
     private dataSource: DataSource
   ) {}  
   async create(createMenuDto: CreateMenuDto, req: any):Promise<any> {
-    return await this.dataSource.manager.transaction(async (transactionalEntityManager) => {
-      const menuId = await transactionalEntityManager.getRepository(Menu).save(createMenuDto).then(res => res.id)
-
-      return await transactionalEntityManager.getRepository(RoleMenu).save({
-        role_code: req.user_role,
-        menu_id: menuId
-      })
-    })
+    return await this.menuRepository.save(createMenuDto)
   }
 
   async findAll() {
@@ -53,6 +46,7 @@ export class MenuService {
 
   async findChildren(id: string) {
     const list = await this.menuRepository.findBy({
+      deleteflag: DeleteFlagEnum.UNDELETE,
       parent_id: id
     })
 

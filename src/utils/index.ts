@@ -36,3 +36,7 @@ export const findTreeIds = (treeList: any[]) => {
 
   return idList;
 }
+
+export const compareTrees = (newTree: any[], oldTree: any[]) => {
+  
+}

@@ -28,6 +28,7 @@ export class RoleService {
 
     try {
       await this.dataSource.manager.transaction(async (transactionalEntityManager) => {
+        await transactionalEntityManager.getRepository(RoleMenu).delete({})
         for (const item of menuIdList) {
           await transactionalEntityManager.getRepository(RoleMenu).save({
             role_code: req.user.user_role,
@@ -45,7 +46,7 @@ export class RoleService {
   async findAllRoleMenu(req: any) {
     const list = await this.roleMenuRepository.find({
       where: {
-        role_code: req.user.user_role,
+        role_code: req.user.user_role === UserRole.NORMAL ? req.user.user_role : null,
         deleteflag: DeleteFlagEnum.UNDELETE
       }
     });
@@ -69,7 +70,7 @@ export class RoleService {
     } else {
       obj = await this.roleRepository.find({
         where: {
-          code: req.user.user_role,
+          code: req.user.user_role === UserRole.NORMAL ? req.user.user_role : null,
           deleteflag: DeleteFlagEnum.UNDELETE
         }
       });

@@ -2,7 +2,8 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, Query, R
 import { MenuService } from './menu.service';
 import { CreateMenuDto } from './dto/create-menu.dto';
 import { UpdateMenuDto } from './dto/update-menu.dto';
-import { BaseResponse } from "../common/baseReponse";
+import { BaseResponse } from "@/common/baseReponse";
+import { UserRole } from "@/users/entities/user.entity";
 
 @Controller('menu')
 export class MenuController {
@@ -10,6 +11,10 @@ export class MenuController {
 
   @Post()
   async create(@Body() createMenuDto: CreateMenuDto, @Request() req: any) {
+    if(req.user.user_role == UserRole.NORMAL) {
+      return new BaseResponse(HttpStatus.FORBIDDEN, "权限不足", null)
+    }
+
     try {
       const saveObj = await this.menuService.create(createMenuDto, req);
 
@@ -59,12 +64,20 @@ export class MenuController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateMenuDto: UpdateMenuDto) {
+  update(@Param('id') id: string, @Body() updateMenuDto: UpdateMenuDto, @Request() req: any) {
+    if(req.user.user_role == UserRole.NORMAL) {
+      return new BaseResponse(HttpStatus.FORBIDDEN, "权限不足", null)
+    }
+
     return this.menuService.update(id, updateMenuDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id') id: string, @Request() req: any) {
+    if(req.user.user_role == UserRole.NORMAL) {
+      return new BaseResponse(HttpStatus.FORBIDDEN, "权限不足", null)
+    }
+
     return this.menuService.remove(id);
   }
 }

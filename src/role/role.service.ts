@@ -4,10 +4,12 @@ import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { Role } from './entities/role.entity';
 import { RoleMenu } from './entities/role_menu.entity';
+import { Menu } from '@/menu/entities/menu.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, In, Repository } from 'typeorm';
 import { UserRole } from "@/users/entities/user.entity"
 import { DeleteFlagEnum } from "@/common/baseEntity";
+import { listToTree } from "@/utils"
 import * as _ from 'lodash';
 
 @Injectable()
@@ -17,7 +19,9 @@ export class RoleService {
     private roleRepository: Repository<Role>,
     @InjectRepository(RoleMenu)
     private roleMenuRepository: Repository<RoleMenu>,
-    private dataSource: DataSource
+    private dataSource: DataSource,
+    @InjectRepository(Menu)
+    private menuRepository: Repository<Menu>,
   ) {}
   async create(createRoleDto: CreateRoleDto, req: any) {
     // TODO
@@ -58,6 +62,29 @@ export class RoleService {
     }
 
     return new BaseResponse(HttpStatus.INTERNAL_SERVER_ERROR, "系统错误", null)
+  }
+
+  async findAuthMenu(req: any) {
+    const list = await this.roleMenuRepository.find({
+      where: {
+        role_code: req.user.user_role === UserRole.NORMAL ? req.user.user_role : null,
+        deleteflag: DeleteFlagEnum.UNDELETE
+      }
+    });
+
+    const authMenuIdList = list.map(item => item.menu_id)
+
+    const menuList = await this.menuRepository.findBy({
+      id: In(authMenuIdList)
+    })
+
+    const treeList = listToTree(menuList);
+
+    if(menuList) {
+      return new BaseResponse(HttpStatus.OK, "获取成功", treeList)
+    }
+
+    return new BaseResponse(HttpStatus.INTERNAL_SERVER_ERROR, "系统错误", null)    
   }
 
   async findAll(req: any) {

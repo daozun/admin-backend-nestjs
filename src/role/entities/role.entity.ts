@@ -1,6 +1,6 @@
 import { Column, Entity } from "typeorm";
-import { BaseEntity } from '../../common/baseEntity';
-import { UserRole } from '..//../users/entities/user.entity';
+import { BaseEntity } from '@/common/baseEntity';
+import { UserRole } from '@/users/entities/user.entity';
 
 @Entity({
     name: "role"

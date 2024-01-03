@@ -22,6 +22,11 @@ export class RoleController {
     return this.roleService.findAllRoleMenu(req);
   }
 
+  @Get('auth/menu')
+  findAuthMenu(@Request() req: any) {
+    return this.roleService.findAuthMenu(req);
+  }  
+
   @Get()
   findAll(@Request() req: any) {
     return this.roleService.findAll(req);

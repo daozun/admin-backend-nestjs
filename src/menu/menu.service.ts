@@ -6,7 +6,7 @@ import { Menu } from './entities/menu.entity';
 import { RoleMenu } from "@/role/entities/role_menu.entity";
 import { InjectRepository } from '@nestjs/typeorm';
 import { BaseResponse } from '@/common/baseReponse';
-import { listToTree } from "@/utils"
+import { listToTree, sortByPriority } from "@/utils"
 import { DeleteFlagEnum } from "@/common/baseEntity";
 
 @Injectable()
@@ -27,9 +27,10 @@ export class MenuService {
     .getMany()
 
     const treeList = listToTree(list);
+    const sortedTree = sortByPriority(treeList)
 
     if(list) {
-      return new BaseResponse(HttpStatus.OK, null, treeList)
+      return new BaseResponse(HttpStatus.OK, null, sortedTree)
     }
 
     return new BaseResponse(HttpStatus.INTERNAL_SERVER_ERROR, "系统错误", null)

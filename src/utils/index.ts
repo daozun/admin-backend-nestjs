@@ -22,6 +22,18 @@ export const listToTree = (items: any[], id = null, link = 'parent_id') =>
     children: listToTree(items, item.id)
   }));
 
+export const sortByPriority = (treeList: { priority?: number; children?: any; }[]) => {
+  treeList.sort((a: { priority: number; }, b: { priority: number; }) => a.priority - b.priority);
+  if (treeList.some((node: { children: any; }) => node.children)) {
+    treeList.forEach((node: { children: any; }) => {
+      if (node.children) {
+        sortByPriority(node.children);
+      }
+    });
+  }
+  return treeList;
+}
+
 export const findTreeIds = (treeList: any[]) => {
   let idList = [];
 

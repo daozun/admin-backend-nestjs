@@ -9,7 +9,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, In, Repository } from 'typeorm';
 import { UserRole } from "@/users/entities/user.entity"
 import { DeleteFlagEnum } from "@/common/baseEntity";
-import { listToTree } from "@/utils"
+import { listToTree, sortByPriority } from "@/utils"
 import * as _ from 'lodash';
 
 @Injectable()
@@ -79,9 +79,10 @@ export class RoleService {
     })
 
     const treeList = listToTree(menuList);
+    const sortedTree = sortByPriority(treeList)
 
     if(menuList) {
-      return new BaseResponse(HttpStatus.OK, "获取成功", treeList)
+      return new BaseResponse(HttpStatus.OK, "获取成功", sortedTree)
     }
 
     return new BaseResponse(HttpStatus.INTERNAL_SERVER_ERROR, "系统错误", null)    

@@ -32,7 +32,12 @@ export class CreateMenuDto {
     @ApiProperty()
     @IsNotEmpty({ message: 'level不能为空' })
     @IsInt({ message: 'level格式错误'})
-    level: number;
+    level: number;    
+
+    @ApiProperty()
+    @IsNotEmpty({ message: 'priority不能为空' })
+    @IsInt({ message: 'priority格式错误'})
+    priority: number;
     
     @ApiProperty()
     @IsNotEmpty({ message: 'parent_id不能为空' })
@@ -43,11 +48,6 @@ export class CreateMenuDto {
     @Type(() => Number)
     @IsInt({ message: '侧边栏显示参数错误' })
     hidden: StatusEnum
-
-    @ApiProperty()
-    @Type(() => Number)
-    @IsInt({ message: '显示跟路由参数错误' })
-    alwaysShow: StatusEnum
 
     @ApiProperty()
     @IsString({ message: '外部URL格式错误'})

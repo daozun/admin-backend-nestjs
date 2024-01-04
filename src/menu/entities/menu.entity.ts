@@ -17,9 +17,6 @@ export class Menu extends BaseEntity {
     @Column({ type: "boolean", default: false})
     hidden: Boolean;
 
-    @Column({ type: "boolean", default: false})
-    alwaysShow: Boolean
-
     @Column({ type: "varchar", default: null})
     component: string;
 
@@ -31,4 +28,7 @@ export class Menu extends BaseEntity {
 
     @Column({ type: "int", default: null})
     level: number;
+
+    @Column({ type: "int", default: null})
+    priority: number;
 }

@@ -5,10 +5,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Role } from './entities/role.entity';
 import { RoleMenu } from './entities/role_menu.entity';
 import { Menu } from '@/menu/entities/menu.entity';
+import { MenuService } from "@/menu/menu.service"
 
 @Module({
   imports: [TypeOrmModule.forFeature([Role, RoleMenu, Menu])],
   controllers: [RoleController],
-  providers: [RoleService],
+  providers: [RoleService, MenuService],
 })
 export class RoleModule {}

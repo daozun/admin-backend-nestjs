@@ -5,6 +5,7 @@ import { UpdateRoleDto } from './dto/update-role.dto';
 import { Role } from './entities/role.entity';
 import { RoleMenu } from './entities/role_menu.entity';
 import { Menu } from '@/menu/entities/menu.entity';
+import { MenuService } from "@/menu/menu.service"
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, In, Repository } from 'typeorm';
 import { UserRole } from "@/users/entities/user.entity"
@@ -22,6 +23,7 @@ export class RoleService {
     private dataSource: DataSource,
     @InjectRepository(Menu)
     private menuRepository: Repository<Menu>,
+    private menuService: MenuService
   ) {}
   async create(createRoleDto: CreateRoleDto, req: any) {
     // TODO
@@ -32,10 +34,10 @@ export class RoleService {
 
     try {
       await this.dataSource.manager.transaction(async (transactionalEntityManager) => {
-        await transactionalEntityManager.getRepository(RoleMenu).delete({})
+        // await transactionalEntityManager.getRepository(RoleMenu).delete({})
         for (const item of menuIdList) {
           await transactionalEntityManager.getRepository(RoleMenu).save({
-            role_code: req.user.user_role,
+            role_code: createRoleDto.role,
             menu_id: item.id
           })
         }
@@ -47,10 +49,10 @@ export class RoleService {
     }
   }
 
-  async findAllRoleMenu(req: any) {
+  async findAllRoleMenu(role: UserRole) {
     const list = await this.roleMenuRepository.find({
       where: {
-        role_code: req.user.user_role === UserRole.NORMAL ? req.user.user_role : null,
+        role_code: role,
         deleteflag: DeleteFlagEnum.UNDELETE
       }
     });
@@ -67,15 +69,17 @@ export class RoleService {
   async findAuthMenu(req: any) {
     const list = await this.roleMenuRepository.find({
       where: {
-        role_code: req.user.user_role === UserRole.NORMAL ? req.user.user_role : null,
+        role_code: req.user.user_role,
         deleteflag: DeleteFlagEnum.UNDELETE
       }
     });
 
-    const authMenuIdList = list.map(item => item.menu_id)
+    const roleList = _.uniqBy(list, 'menu_id');
+
+    const authMenuIdList = roleList.map(item => item.menu_id)
 
     const menuList = await this.menuRepository.findBy({
-      id: In(authMenuIdList)
+      id: In([...authMenuIdList, "0"])
     })
 
     const treeList = listToTree(menuList);
@@ -89,20 +93,12 @@ export class RoleService {
   }
 
   async findAll(req: any) {
-    let obj = null;
-
-    if(req.user_role === UserRole.ADMIN) {
-      obj = await this.roleRepository.findBy({
+    let obj = await this.roleRepository.find({
+      where: {
+        code: req.user.user_role === UserRole.NORMAL ? req.user.user_role : null,
         deleteflag: DeleteFlagEnum.UNDELETE
-      });
-    } else {
-      obj = await this.roleRepository.find({
-        where: {
-          code: req.user.user_role === UserRole.NORMAL ? req.user.user_role : null,
-          deleteflag: DeleteFlagEnum.UNDELETE
-        }
-      });
-    }
+      }
+    });
 
     if(obj) {
       return new BaseResponse(HttpStatus.OK, null, obj)

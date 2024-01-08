@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Request, Query } from '@nestjs/common';
 import { RoleService } from './role.service';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
+import { GetRoleDto } from './dto/get-role.dto';
 
 @Controller('role')
 export class RoleController {
@@ -18,8 +19,8 @@ export class RoleController {
   }
 
   @Get('menu')
-  findAllRoleMenu(@Request() req: any) {
-    return this.roleService.findAllRoleMenu(req);
+  findAllRoleMenu(@Query() getRoleDto: GetRoleDto) {
+    return this.roleService.findAllRoleMenu(getRoleDto.role);
   }
 
   @Get('auth/menu')

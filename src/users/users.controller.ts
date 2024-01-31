@@ -57,7 +57,7 @@ export class UsersController {
       fileType: /(jpg|jpeg|png)$/,
     })
     .addMaxSizeValidator({
-      maxSize: 5242880 // 5mb
+      maxSize: 3145728 // 3mb
     }) 
     .build({
       exceptionFactory(error) {

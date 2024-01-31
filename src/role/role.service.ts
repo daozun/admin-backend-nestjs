@@ -34,7 +34,9 @@ export class RoleService {
 
     try {
       await this.dataSource.manager.transaction(async (transactionalEntityManager) => {
-        // await transactionalEntityManager.getRepository(RoleMenu).delete({})
+        await transactionalEntityManager.getRepository(RoleMenu).delete({
+          role_code: req.user.user_role
+        })
         for (const item of menuIdList) {
           await transactionalEntityManager.getRepository(RoleMenu).save({
             role_code: createRoleDto.role,

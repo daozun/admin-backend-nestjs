@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { CreateMenuDto } from './dto/create-menu.dto';
 import { UpdateMenuDto } from './dto/update-menu.dto';
 import { DataSource, Repository } from 'typeorm';
@@ -15,7 +15,8 @@ export class MenuService {
     @InjectRepository(Menu)
     private menuRepository: Repository<Menu>,
     @InjectRepository(RoleMenu)
-    private dataSource: DataSource
+    private dataSource: DataSource,
+    private logger: Logger
   ) {}  
   async create(createMenuDto: CreateMenuDto, req: any):Promise<any> {
     return await this.menuRepository.save(createMenuDto)
@@ -30,6 +31,7 @@ export class MenuService {
     const sortedTree = sortByPriority(treeList)
 
     if(list) {
+      this.logger.log("获取菜单成功, 服务名: %s", MenuService.name);
       return new BaseResponse(HttpStatus.OK, null, sortedTree)
     }
 

@@ -4,6 +4,7 @@ import {
     HttpStatus,
     Injectable,
     UnauthorizedException,
+    Logger
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
@@ -13,7 +14,7 @@ import { Reflector } from '@nestjs/core';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-    constructor(private jwtService: JwtService, private reflector: Reflector) {}
+    constructor(private jwtService: JwtService, private reflector: Reflector, private logger: Logger) {}
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
         const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
@@ -28,6 +29,7 @@ export class AuthGuard implements CanActivate {
         const request = context.switchToHttp().getRequest();
         const token = this.extractTokenFromHeader(request);
         if (!token) {
+          this.logger.error("没有权限, 用户名:", request['user'].username)
           throw new BaseResponse(HttpStatus.UNAUTHORIZED, "没有权限", null)
         }
         try {
@@ -39,6 +41,7 @@ export class AuthGuard implements CanActivate {
           );
           request['user'] = payload;
         } catch {
+          this.logger.error("token过期, 用户名:", request['user'].username)
           throw new BaseResponse(HttpStatus.UNAUTHORIZED, "token已过期", null)
         }
 

@@ -1,5 +1,5 @@
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Module } from '@nestjs/common';
+import { Module, Logger } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
@@ -21,6 +21,7 @@ import { ArticleModule } from './article/article.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { RoleModule } from './role/role.module';
 import { MenuModule } from './menu/menu.module';
+import { LoggerModule } from './logger/logger.module';
 
 @Module({
   imports: [
@@ -42,9 +43,10 @@ import { MenuModule } from './menu/menu.module';
       entities: [User, Login, Register, Article, Role, Menu, RoleMenu],
       synchronize: process.env.FLAG === 'dev' ? true : false,
       logging: true
-    }), UsersModule, RegisterModule, LoginModule, AuthModule, ArticleModule, RoleModule, MenuModule],
+    }), UsersModule, RegisterModule, LoginModule, AuthModule, ArticleModule, RoleModule, MenuModule, LoggerModule
+  ],
   controllers: [AppController],
-  providers: [AppService,
+  providers: [AppService, Logger,
     {
       provide: APP_GUARD,
       useClass: AuthGuard,

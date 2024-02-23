@@ -29,7 +29,7 @@ export class AuthGuard implements CanActivate {
         const request = context.switchToHttp().getRequest();
         const token = this.extractTokenFromHeader(request);
         if (!token) {
-          this.logger.error("没有权限, 用户名:", request['user'].username)
+          this.logger.error("没有权限")
           throw new BaseResponse(HttpStatus.UNAUTHORIZED, "没有权限", null)
         }
         try {
@@ -41,7 +41,7 @@ export class AuthGuard implements CanActivate {
           );
           request['user'] = payload;
         } catch {
-          this.logger.error("token过期, 用户名:", request['user'].username)
+          this.logger.error("token过期")
           throw new BaseResponse(HttpStatus.UNAUTHORIZED, "token已过期", null)
         }
 

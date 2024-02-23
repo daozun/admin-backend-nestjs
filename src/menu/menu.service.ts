@@ -71,6 +71,7 @@ export class MenuService {
       }      
     }
 
+    this.logger.error("不是一个有效id, menu.update")
     return new BaseResponse(HttpStatus.BAD_REQUEST, "不是一个有效id", null)
   }
 
@@ -97,6 +98,7 @@ export class MenuService {
       }
     }
 
+    this.logger.error("不是一个有效id, menu.remove")
     return new BaseResponse(HttpStatus.BAD_REQUEST, "不是一个有效id", null)
   }
 }

@@ -11,6 +11,7 @@ import { DataSource, In, Repository } from 'typeorm';
 import { UserRole } from "@/users/entities/user.entity"
 import { DeleteFlagEnum } from "@/common/baseEntity";
 import { listToTree, sortByPriority } from "@/utils"
+import { SelectEnum } from "@/role/entities/role_menu.entity"
 import * as _ from 'lodash';
 
 @Injectable()
@@ -40,7 +41,8 @@ export class RoleService {
         for (const item of menuIdList) {
           await transactionalEntityManager.getRepository(RoleMenu).save({
             role_code: createRoleDto.role,
-            menu_id: item.id
+            menu_id: item.id,
+            is_select: SelectEnum.SELECTED
           })
         }
       })   
